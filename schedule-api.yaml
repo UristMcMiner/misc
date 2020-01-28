@@ -1,0 +1,103 @@
+openapi: 3.0.0
+info:
+  title: Home Automation Scheduler API
+  description: Scheduler API to schedule tasks in the Home automation stack
+  version: 2.0.0
+servers:
+  - url: https://controller.homeautomation.stack/api/v2.0/scheduler
+    description: Base URL
+    
+components:
+  schemas:
+    Job:
+      properties:
+        task_id:
+          type: string
+        time:
+          type: string
+        second:
+          type: string
+        minute:
+          type: string
+        hour:
+          type: string
+        day_m:
+          type: string
+        day_w:
+          type: string
+        week:
+          type: string
+        month:
+          type: string
+        year:
+          type: string
+          
+paths:
+  /jobs/{job_id}:
+    get:
+      tags:
+        - Scheduler
+      summary: Get a Job
+      description: Well, gets a job
+      parameters:
+        - name: job_id
+          in: path
+          required: true
+          description: Job ID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Job'
+    delete:
+      tags:
+        - Scheduler
+      summary: Delete a job
+      description: Well, delete a job
+      parameters:
+        - name: job_id
+          in: path
+          required: true
+          description: Job ID
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+  /jobs:
+    get:
+      tags:
+        - Scheduler
+      summary: Get configured jobs
+      description: Job information
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Job'
+    post:
+      tags:
+        - Scheduler
+      summary: Add a new job
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Job'
+      responses:
+        '201':
+          description: OK created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Job'
+    
