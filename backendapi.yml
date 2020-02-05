@@ -1,0 +1,381 @@
+openapi: 3.0.0
+info:
+  title: Home Automation Backend API
+  description: Backend API to control the Home automation stack
+  version: 2.0.0
+servers:
+  - url: https://controller.homeautomation.stack/api/v2.0
+    description: Base URL
+    
+components:
+  schemas:
+    Message:
+      properties:
+        message:
+          type: string
+    State:
+      properties:
+        state:
+          type: string
+    Task:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+        oneshot:
+          type: string
+        time:
+          type: string
+        second:
+          type: string
+        minute:
+          type: string
+        hour:
+          type: string
+        day_m:
+          type: string
+        day_w:
+          type: string
+        week:
+          type: string
+        month:
+          type: string
+        year:
+          type: string
+        operations:
+          type: array
+          items:
+            $ref: '#/components/schemas/Operation'
+    Operation:
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+        pin:
+          type: integer
+        node:
+          type: string
+        toggle:
+          type: string
+        state:
+          type: string
+    Status:
+      properties:
+        op:
+          $ref: '#/components/schemas/Operation'
+        state:
+          type: string
+    Metric:
+      properties:
+        name:
+          type: string
+    Sensor:
+      properties:
+        id:
+          type: integer
+        description:
+          type: string
+        second:
+          type: string
+        minute:
+          type: string
+        node:
+          type: string
+        metrics:
+          type: array
+          items:
+            $ref: '#/components/schemas/Metric'
+  
+paths:
+  /:
+    get:
+      summary: Returns the Hello World Message
+      description: Possible liveness check
+      responses:
+        '200':
+          description: Greets you in a polite manner
+  /task/{task_id}:
+    get:
+      tags:
+        - Task
+      summary: Get the task with the corresponding id
+      description: well, get a task
+      parameters:
+        - name: task_id
+          in: path
+          required: true
+          description: Task ID
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+        '404':
+          description: Task not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+    delete:
+      tags:
+        - Task
+      summary: Delete a task
+      description: Well, delete a task
+      parameters:
+        - name: task_id
+          in: path
+          required: true
+          description: Task ID
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/State'
+        '404':
+          description: Task not found
+  /task:
+    get:
+      tags:
+        - Task
+      summary: Get all tasks
+      description: Get all tasks saved in the backend
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Task'
+    post:
+      tags:
+        - Task
+      summary: Add a new task
+      description: Adds a new task to the backend
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Task'
+      
+      responses:
+        '201':
+          description: OK created
+          content:
+            application/json:
+              schema:
+               $ref: '#/components/schemas/Task'
+        '409':
+          description: Object already exists
+        '406':
+          description: Request body not sufficient or malformed
+    put:
+      tags:
+        - Task
+      summary: Edit an existing Task
+      description: Well, edit an Task
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Task'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/State'
+    delete:
+      tags:
+        - Task
+      summary: Delete all Tasks
+      description: Well, delete all tasks
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/State'
+  /operation/{operation_id}:
+    get:
+      tags:
+        - Operation
+      summary: Get the operation with the corresponding id
+      description: well, get an operation
+      parameters:
+        - name: operation_id
+          in: path
+          required: true
+          description: Operation ID
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Operation'
+        '404':
+          description: Task not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
+    delete:
+      tags:
+        - Operation
+      summary: Delete an operation
+      description: Well, delete an operation
+      parameters:
+        - name: operation_id
+          in: path
+          required: true
+          description: Operation ID
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/State'
+        '404':
+          description: Task not found    
+  /operation:
+    get:
+      tags:
+        - Operation
+      summary: Get all operations
+      description: Get all operations saved in the backend
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Operation'
+    post:
+      tags:
+        - Operation
+      summary: Add a new operation
+      description: Adds a new operation to the backend
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Operation'
+      responses:
+        '201':
+          description: OK created
+          content:
+            application/json:
+              schema:
+               $ref: '#/components/schemas/Operation'
+        '409':
+          description: Object already exists
+        '406':
+          description: Request body not sufficient or malformed
+    put:
+      tags:
+        - Operation
+      summary: Edit an existing Operation
+      description: Well, edit an Operation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Operation'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/State'
+    delete:
+      tags:
+        - Operation
+      summary: Delete all Operations
+      description: Well, delete all operations
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/State'
+    
+  /status:
+    get:
+      tags:
+        - Operation
+      summary: Get current state of an operation
+      description: Get status of a pin referenced by an operation
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Status'
+  /sensor/{sensor_id}:
+    get:
+      tags:
+        - Sensor
+      summary: Get the sensor with the corresponding id
+      description: well, get a sensor
+      parameters:
+        - name: sensor_id
+          in: path
+          required: true
+          description: Sensor ID
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Sensor'
+        '404':
+          description: Task not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Message'
